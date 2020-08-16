@@ -65,6 +65,7 @@ async function initOnLoadCompleted(e) {
         let searchText = inputElem.value;
         console.log(searchText);
 
+        //Extract Question string
         let reQuestion = /^.+\(/i;
         let question = reQuestion.exec(searchText);
         let questionString = question[0];
@@ -75,15 +76,20 @@ async function initOnLoadCompleted(e) {
 
         console.log(questionString);
 
+        //Extract Option string and execute google search.
         let reOptions = /\".+?\"/gi;
         let processes = [];
         while ((option = reOptions.exec(searchText)) != null) {
             let optionString = option[0];
             console.log(optionString);
-            processes.push(await processA(questionString + " " + optionString));
+            processes.push(await GoogleSearch(questionString, optionString));
         }
-
+        //wait all completed.
         await Promise.all(processes);
+
+        console.log(SearchResults);
+
+
 
         const endTime = performance.now();
         console.log(endTime - startTime);
@@ -92,18 +98,19 @@ async function initOnLoadCompleted(e) {
 }
 window.addEventListener("load", initOnLoadCompleted, false);
 
-const processA = async function (query) {
+const GoogleSearch = async function (question, option) {
     await $.ajax({
-        url: 'https://www.google.com/search?q=' + query,
+        url: 'https://www.google.com/search?q=' + question + " " + option,
         type: 'GET',
         dataType: 'html'
     })
         .done((data) => {
-            console.log(data);
+            // console.log(data);
+            SearchResults[option] = data;
         });
-
-
 }
+
+let SearchResults = {};
 
 function ExtractQuotedString(inputText) {
     let reQuotedWord = /\".+?\"/gi;
