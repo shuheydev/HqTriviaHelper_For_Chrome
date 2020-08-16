@@ -1,0 +1,40 @@
+/* ハイライトの色以外の共通の外観 */
+
+searchandhighlight.searchandhighlight-common {
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.3) 1px 1px 3px;
+    padding-left: 0px;
+    padding-right: 0px;
+    text-decoration: none;
+    font-style: normal;
+}
+
+searchandhighlight.searchandhighlight-find-color-0 {
+    background-color: #c9ff93;
+}
+
+searchandhighlight.searchandhighlight-find-color-1 {
+    background-color: #93c9ff;
+}
+
+searchandhighlight.searchandhighlight-find-color-2 {
+    background-color: #ffdead;
+}
+
+searchandhighlight.searchandhighlight-find-color-3 {
+    background-color: #ff93c9;
+}
+
+searchandhighlight.searchandhighlight-find-color-4 {
+    background-color: #ffff93;
+}
+
+searchandhighlight.searchandhighlight-find-color-5 {
+    background-color: #d6aeff;
+}
+searchandhighlight.searchandhighlight-find-color-6 {
+    background-color: #ffbf7f;
+}
+searchandhighlight.searchandhighlight-find-color-7 {
+    background-color: #9393ff;
+}

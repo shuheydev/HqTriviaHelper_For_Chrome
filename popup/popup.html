@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="popup.css">
+</head>
+
+<body>
+
+    <span>Search words</span>
+    <br>
+    <textarea id="textAreaTarget" rows="4" cols="40"></textarea><br>
+
+    <table>
+        <tr>
+            <td>
+                <button id="buttonSearch">Search</button>
+                <button id="buttonClear">Clear</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="top-margin">
+                    <span
+                        title='The words enclosed in quote(") in google search box will be automatically highlighted when execute Google search. Highlight only for search result. This has priority over "Auto highlight".'>
+                        Highlight on Google Search
+                    </span>
+                    <label class="switch left-margin">
+                        <input id="toggle_highlight_on_search" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="top-margin">
+                    <span
+                        title='The words in the textbox of this tool will be automatically highlighted when page is loaded.'>
+                        Auto highlight
+                    </span>
+                    <label class="switch left-margin">
+                        <input id="toggle_auto_highlight" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

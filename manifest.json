@@ -1,0 +1,55 @@
+{
+    "manifest_version": 2,
+    "name": "HQ Trivia Helper",
+    "version": "0.0.0.1",
+    "icons": {
+        "128": "icons/hqTriviaHelperIcon.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "128": "icons/hqTriviaHelperIcon.png"
+        },
+        "default_title": "HQ Trivia Helper",
+        "default_popup": "popup/popup.html",
+        "browser_style": true
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*",
+                "file:///*/*"
+            ],
+            "js": [
+                "contentScripts/scripts/contentScript.js",
+                "contentScripts/scripts/highlight.js",
+                "libraries/jquery.min.js"
+            ],
+            "css": [
+                "contentScripts/css/highlight.css"
+            ],
+            "all_frames": true,
+            "run_at": "document_end"
+        }
+    ],
+    "background": {
+        "scripts": [
+            "background/background.js"
+        ]
+    },
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+L"
+            }
+        },
+        "command_toggleHighlightNow": {
+            "suggested_key": {
+                "default": "Alt+Shift+L"
+            },
+            "description": "Toggle Highlight"
+        }
+    },
+    "permissions": [
+        "storage"
+    ]
+}
