@@ -89,7 +89,8 @@ async function initOnLoadCompleted(e) {
 
         console.log(SearchResults);
 
-
+        //send search result to background page
+        chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
 
         const endTime = performance.now();
         console.log(endTime - startTime);
