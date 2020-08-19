@@ -37,24 +37,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({});
     console.log(message.searchResults);
     console.log(sender.tab.id);
+    console.log(message.searchResults[0]);
 
     //opsion1,2,3.htmlをそれぞれ更新する.
 
 
-
-    // // const url=chrome.runtime.getURL("../TestData/option1.html");
-    // // fetch(url)
-    // // .then()
-    // chrome.runtime.getPackageDirectoryEntry((root) => {
-    //     root.getFile("../TestData/option0.html", {}, (optionFile) => {
-    //         optionFile.file((file) => {
-    //             var reader = new FileReader();
-    //             reader.readAsText(file);
-    //             var writer = new Wrixx
-    //         });
-    //     });
-    // });
-
-    // chrome.tabs.update(sender.tab.id, { url: "../TestData/main.html" });
+    chrome.tabs.update(sender.tab.id, { url: "../TestData/main.html" });
 });
 
