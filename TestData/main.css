@@ -9,7 +9,7 @@ header {
 border:dashed 1px #999;
 }
 
-#leftnavi {
+#option1 {
 float:left;
 width:33%;
 height:100%;
@@ -18,7 +18,16 @@ height:100%;
 background-color: yellow;
 }
 
-#rightnavi {
+#option2 {
+float:left;
+width:33%;
+height:100%;
+/* border:dashed 1px #999; */
+/* margin:10px 0px 10px 0px; */
+background-color: blue;
+}
+
+#option3 {
 float:left;
 width:33%;
 height:100%;
@@ -27,14 +36,7 @@ height:100%;
 background-color: red;
 }
 
-#contents {
-float:left;
-width:33%;
-height:100%;
-/* border:dashed 1px #999; */
-/* margin:10px 0px 10px 0px; */
-background-color: blue;
-}
+
 
 footer {
 clear:both;
