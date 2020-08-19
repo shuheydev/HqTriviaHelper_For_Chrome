@@ -79,10 +79,11 @@ async function initOnLoadCompleted(e) {
         //Extract Option string and execute google search.
         let reOptions = /\".+?\"/gi;
         let processes = [];
+        let optionIndex = 0;
         while ((option = reOptions.exec(searchText)) != null) {
             let optionString = option[0];
             console.log(optionString);
-            processes.push(await GoogleSearch(questionString, optionString));
+            processes.push(await GoogleSearch(questionString, optionString, optionIndex++));
         }
         //wait all completed.
         await Promise.all(processes);
@@ -99,7 +100,7 @@ async function initOnLoadCompleted(e) {
 }
 window.addEventListener("load", initOnLoadCompleted, false);
 
-const GoogleSearch = async function (question, option) {
+const GoogleSearch = async function (question, option, optionIndex) {
     await $.ajax({
         url: 'https://www.google.com/search?q=' + question + " " + option,
         type: 'GET',
@@ -107,7 +108,7 @@ const GoogleSearch = async function (question, option) {
     })
         .done((data) => {
             // console.log(data);
-            SearchResults[option] = data;
+            SearchResults[optionIndex] = { option: option, data: data, index: optionIndex };
         });
 }
 
