@@ -59,32 +59,44 @@ async function initOnLoadCompleted(e) {
 
         console.log("load completed");
 
-        let inputElem = document.querySelector("input[name='q']");
-        if (inputElem == null)
-            return;
-        let searchText = inputElem.value;
+        // let inputElem = document.querySelector("input[name='q']");
+        // if (inputElem == null)
+        //     return;
+        // let searchText = inputElem.value;
+
+        let searchText = GetSearchText(document);
         console.log(searchText);
 
         //Extract Question string
-        let reQuestion = /^.+\(/i;
-        let question = reQuestion.exec(searchText);
-        let questionString = question[0];
+        // let reQuestion = /^.+\(/i;
+        // let question = reQuestion.exec(searchText);
+        // let questionString = question[0];
 
-        searchText = searchText.replace(questionString, "");
+        let questionString = GetQuestionString(searchText);
+        let optionString = searchText.replace(questionString, "");
 
         questionString = questionString.substring(0, questionString.length - 1);
 
         console.log(questionString);
 
         //Extract Option string and execute google search.
-        let reOptions = /\".+?\"/gi;
+        // let reOptions = /\".+?\"/gi;
+        // let processes = [];
+        // let optionIndex = 0;
+        // while ((option = reOptions.exec(optionString)) != null) {
+        //     let option = option[0];
+        //     console.log(option);
+        //     processes.push(await GoogleSearch(questionString, optionString, optionIndex++));
+        // }
         let processes = [];
         let optionIndex = 0;
-        while ((option = reOptions.exec(searchText)) != null) {
-            let optionString = option[0];
-            console.log(optionString);
-            processes.push(await GoogleSearch(questionString, optionString, optionIndex++));
+        let options = GetOptions(optionString);
+        for (i = 0; i < options.length; i++) {
+            let option = options[i];
+            console.log(option);
+            processes.push(await GoogleSearch(questionString, option, optionIndex++));
         }
+
         //wait all completed.
         await Promise.all(processes);
 
@@ -99,6 +111,32 @@ async function initOnLoadCompleted(e) {
     }
 }
 window.addEventListener("load", initOnLoadCompleted, false);
+
+function GetSearchText(doc) {
+    let inputElem = doc.querySelector("input[name='q']");
+    if (inputElem == null)
+        return;
+    let searchText = inputElem.value;
+
+    return searchText;
+}
+function GetQuestionString(searchText) {
+    let reQuestion = /^.+\(/i;
+    let question = reQuestion.exec(searchText);
+    let questionString = question[0];
+
+    return questionString;
+}
+function GetOptions(optionString) {
+    let options = [];
+    let reOptions = /\".+?\"/gi;
+    while ((option = reOptions.exec(optionString)) != null) {
+        options.push(option[0]);
+    }
+
+    return options;
+}
+
 
 const GoogleSearch = async function (question, option, optionIndex) {
     await $.ajax({
