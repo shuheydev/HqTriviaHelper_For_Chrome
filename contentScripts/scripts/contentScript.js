@@ -7,61 +7,44 @@ var IsHighlight = false;
 
 //EventHandler when page loaded.
 async function initOnLoadCompleted(e) {
-    //add handler to event that receive message from popup page.
-    browser.runtime.onMessage.addListener((message) => {
+    const startTime = performance.now();
+    //execute if switch is ON.
+    chrome.storage.local.get("IsHqTriviaHelperEnabled", async function (result) {
+        let isHqTriviaHelperEnabled = result.IsHqTriviaHelperEnabled;
 
-    });
+        if (!isHqTriviaHelperEnabled)
+            return;
 
-    //this must be executed after the window is fully loaded
-    if (document.readyState === 'complete') {
-        const startTime = performance.now();
+        let searchText = GetSearchText(document);
+        console.log(searchText);
 
-        console.log("load completed");
+        //Extract Question string
+        let questionString = GetQuestionString(searchText);
 
-        //execute if switch is ON.
-        chrome.storage.local.get("IsHqTriviaHelperEnabled", async function (result) {
-            let isHqTriviaHelperEnabled = result.IsHqTriviaHelperEnabled;
+        //Extract Question string
+        let optionString = GetOpsionString(searchText, questionString);
 
-            if (!isHqTriviaHelperEnabled)
-                return;
+        console.log(questionString);
 
-            let searchText = GetSearchText(document);
-            console.log(searchText);
+        //Extract Option string
+        let options = GetOptions(optionString);
 
-            //Extract Question string
-            let questionString = GetQuestionString(searchText);
+        //wait all completed.
+        let searchResults = await SearchEveryOptionsAsync(options, questionString);
+        // console.log(searchResults);
 
-            //Extract Question string
-            let optionString = GetOpsionString(searchText, questionString);
+        //Reconstruct page
+        ReConstrucPage(document, searchResults);
 
-            // questionString = questionString.substring(0, questionString.length - 1);
-
-            console.log(questionString);
-
-            //Extract Option string
-            let options = GetOptions(optionString);
-
-            //wait all completed.
-            let searchResults = await SearchEveryOptionsAsync(options, questionString);
-            console.log(searchResults);
-
-            //send search result to background page
-            // chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
-
-            //Reconstruct page
-            ReConstrucPage(document, searchResults);
-
-            let quotedString = options.join(' ');
-            Highlight(quotedString);
-            IsHighlight = true;
-
-        });
-
+        let quotedString = options.join(' ');
+        Highlight(quotedString);
+        IsHighlight = true;
 
         const endTime = performance.now();
         console.log(endTime - startTime);
         console.log("all completed");
-    }
+    });
+
 }
 window.addEventListener("load", initOnLoadCompleted, false);
 
@@ -127,6 +110,7 @@ function GetQuestionString(searchText) {
     let reQuestion = /^.+\(/i;
     let question = reQuestion.exec(searchText);
     let questionString = question[0];
+    questionString = questionString.substring(0, questionString.length - 1);
 
     return questionString;
 }
@@ -155,7 +139,6 @@ const GoogleSearch = async function (question, option, optionIndex) {
     })
         .done((data) => {
             // console.log(data);
-            // SearchResults[optionIndex] = { option: option, data: data, index: optionIndex };
             result = { option: option, data: data, index: optionIndex };
         });
 
