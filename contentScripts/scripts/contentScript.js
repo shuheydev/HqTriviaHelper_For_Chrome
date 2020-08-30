@@ -59,49 +59,23 @@ async function initOnLoadCompleted(e) {
 
         console.log("load completed");
 
-        // let inputElem = document.querySelector("input[name='q']");
-        // if (inputElem == null)
-        //     return;
-        // let searchText = inputElem.value;
-
         let searchText = GetSearchText(document);
         console.log(searchText);
 
         //Extract Question string
-        // let reQuestion = /^.+\(/i;
-        // let question = reQuestion.exec(searchText);
-        // let questionString = question[0];
-
         let questionString = GetQuestionString(searchText);
-        let optionString = searchText.replace(questionString, "");
 
-        questionString = questionString.substring(0, questionString.length - 1);
+        //Extract Question string
+        let optionString = GetOpsionString(searchText, questionString);
+
+        // questionString = questionString.substring(0, questionString.length - 1);
 
         console.log(questionString);
 
-        //Extract Option string and execute google search.
-        // let reOptions = /\".+?\"/gi;
-        // let processes = [];
-        // let optionIndex = 0;
-        // while ((option = reOptions.exec(optionString)) != null) {
-        //     let option = option[0];
-        //     console.log(option);
-        //     processes.push(await GoogleSearch(questionString, optionString, optionIndex++));
-        // }
-
+        //Extract Option string
         let options = GetOptions(optionString);
-        // let processes = [];
-        // let optionIndex = 0;
-        // for (i = 0; i < options.length; i++) {
-        //     let option = options[i];
-        //     console.log(option);
-        //     processes.push(await GoogleSearch(questionString, option, optionIndex++));
-        // }
 
-        // //wait all completed.
-        // let searchResults;
-        // await Promise.all(processes).then((results) => searchResults = results);
-
+        //wait all completed.
         let searchResults = await SearchEveryOptionsAsync(options, questionString);
         console.log(searchResults);
 
@@ -145,6 +119,11 @@ function GetQuestionString(searchText) {
     let questionString = question[0];
 
     return questionString;
+}
+function GetOpsionString(searchText, questionString) {
+    let optionString = searchText.replace(questionString, "");
+
+    return optionString;
 }
 function GetOptions(optionString) {
     let options = [];
