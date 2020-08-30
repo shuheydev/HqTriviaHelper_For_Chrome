@@ -9,47 +9,7 @@ var IsHighlight = false;
 async function initOnLoadCompleted(e) {
     //add handler to event that receive message from popup page.
     browser.runtime.onMessage.addListener((message) => {
-        switch (message.command) {
-            case 'search'://'search' button clicked.
-                Highlight(message.target);
-                IsHighlight = true;
-                break;
-            case 'clear'://'clear' button clicked.
-                Highlight("");
-                IsHighlight = false;
-                break;
-            case 'toggle'://'Shif+Alt+L'Shortcut
-                if (IsHighlight) {
-                    Highlight("");
-                    IsHighlight = false;
-                }
-                else {
-                    Highlight(message.target);
-                    IsHighlight = true;
-                }
-                break;
-            case 'toggle-highlight-on-googlesearch':
-                chrome.storage.local.get("IsHighlightOnSearchEnabled", function (result) {
-                    let isHighlightOnSearchEnabled = result.IsHighlightOnSearchEnabled;
-                    if (isHighlightOnSearchEnabled) {
-                        let inputElem = document.querySelector("input[name='q']");
-                        if (inputElem == null)
-                            return;
 
-                        let searchText = inputElem.value;
-
-                        //Extract strings surrounded by `"`.
-                        let quotedString = ExtractQuotedString(searchText);
-                        Highlight(quotedString);
-                        IsHighlight = true;
-                    }
-                    else {
-                        Highlight("");
-                        IsHighlight = false;
-                    }
-                });
-                break;
-        }
     });
 
     //this must be executed after the window is fully loaded
@@ -59,10 +19,10 @@ async function initOnLoadCompleted(e) {
         console.log("load completed");
 
         //execute if switch is ON.
-        chrome.storage.local.get("IsHighlightOnSearchEnabled", async function (result) {
-            let isHighlightOnSearchEnabled = result.IsHighlightOnSearchEnabled;
+        chrome.storage.local.get("IsHqTriviaHelperEnabled", async function (result) {
+            let isHqTriviaHelperEnabled = result.IsHqTriviaHelperEnabled;
 
-            if (!isHighlightOnSearchEnabled)
+            if (!isHqTriviaHelperEnabled)
                 return;
 
             let searchText = GetSearchText(document);
