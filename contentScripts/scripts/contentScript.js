@@ -88,22 +88,25 @@ async function initOnLoadCompleted(e) {
         //     console.log(option);
         //     processes.push(await GoogleSearch(questionString, optionString, optionIndex++));
         // }
-        let processes = [];
-        let optionIndex = 0;
+
         let options = GetOptions(optionString);
-        for (i = 0; i < options.length; i++) {
-            let option = options[i];
-            console.log(option);
-            processes.push(await GoogleSearch(questionString, option, optionIndex++));
-        }
+        // let processes = [];
+        // let optionIndex = 0;
+        // for (i = 0; i < options.length; i++) {
+        //     let option = options[i];
+        //     console.log(option);
+        //     processes.push(await GoogleSearch(questionString, option, optionIndex++));
+        // }
 
-        //wait all completed.
-        await Promise.all(processes);
+        // //wait all completed.
+        // let searchResults;
+        // await Promise.all(processes).then((results) => searchResults = results);
 
-        console.log(SearchResults);
+        let searchResults = await SearchEveryOptionsAsync(options, questionString);
+        console.log(searchResults);
 
         //send search result to background page
-        chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
+        // chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
 
         const endTime = performance.now();
         console.log(endTime - startTime);
@@ -111,6 +114,22 @@ async function initOnLoadCompleted(e) {
     }
 }
 window.addEventListener("load", initOnLoadCompleted, false);
+
+async function SearchEveryOptionsAsync(options, questionString) {
+    let processes = [];
+    let optionIndex = 0;
+    for (i = 0; i < options.length; i++) {
+        let option = options[i];
+        console.log(option);
+        processes.push(await GoogleSearch(questionString, option, optionIndex++));
+    }
+
+    //wait all completed.
+    let searchResults;
+    await Promise.all(processes).then((results) => searchResults = results);
+
+    return searchResults;
+}
 
 function GetSearchText(doc) {
     let inputElem = doc.querySelector("input[name='q']");
@@ -139,6 +158,7 @@ function GetOptions(optionString) {
 
 
 const GoogleSearch = async function (question, option, optionIndex) {
+    let result;
     await $.ajax({
         url: 'https://www.google.com/search?q=' + question + " " + option,
         type: 'GET',
@@ -146,8 +166,11 @@ const GoogleSearch = async function (question, option, optionIndex) {
     })
         .done((data) => {
             // console.log(data);
-            SearchResults[optionIndex] = { option: option, data: data, index: optionIndex };
+            // SearchResults[optionIndex] = { option: option, data: data, index: optionIndex };
+            result = { option: option, data: data, index: optionIndex };
         });
+
+    return result;
 }
 
 let SearchResults = {};
