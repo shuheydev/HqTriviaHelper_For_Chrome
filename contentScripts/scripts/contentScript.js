@@ -52,44 +52,50 @@ async function initOnLoadCompleted(e) {
         }
     });
 
-    //highlight after loadcompleted
     //this must be executed after the window is fully loaded
     if (document.readyState === 'complete') {
         const startTime = performance.now();
 
         console.log("load completed");
 
-        let searchText = GetSearchText(document);
-        console.log(searchText);
+        //execute if switch is ON.
+        chrome.storage.local.get("IsHighlightOnSearchEnabled", async function (result) {
+            let isHighlightOnSearchEnabled = result.IsHighlightOnSearchEnabled;
 
-        //Extract Question string
-        let questionString = GetQuestionString(searchText);
+            if (!isHighlightOnSearchEnabled)
+                return;
 
-        //Extract Question string
-        let optionString = GetOpsionString(searchText, questionString);
+            let searchText = GetSearchText(document);
+            console.log(searchText);
 
-        // questionString = questionString.substring(0, questionString.length - 1);
+            //Extract Question string
+            let questionString = GetQuestionString(searchText);
 
-        console.log(questionString);
+            //Extract Question string
+            let optionString = GetOpsionString(searchText, questionString);
 
-        //Extract Option string
-        let options = GetOptions(optionString);
+            // questionString = questionString.substring(0, questionString.length - 1);
 
-        //wait all completed.
-        let searchResults = await SearchEveryOptionsAsync(options, questionString);
-        console.log(searchResults);
+            console.log(questionString);
 
-        //send search result to background page
-        // chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
+            //Extract Option string
+            let options = GetOptions(optionString);
 
-        //Reconstruct page
-        ReConstrucPage(document, searchResults);
+            //wait all completed.
+            let searchResults = await SearchEveryOptionsAsync(options, questionString);
+            console.log(searchResults);
 
-        //highlight on search
-        let quotedString = options.join(' ');
-        Highlight(quotedString);
-        IsHighlight = true;
+            //send search result to background page
+            // chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
 
+            //Reconstruct page
+            ReConstrucPage(document, searchResults);
+
+            let quotedString = options.join(' ');
+            Highlight(quotedString);
+            IsHighlight = true;
+
+        });
 
 
         const endTime = performance.now();
@@ -110,13 +116,10 @@ function ReConstrucPage(doc, searchResults) {
     }
 }
 function InsertSearchResult(bodyElem, searchResult) {
-    const colors = ["", "greenyellow", "lightpink", "lightblue"];
-    let parser = new DOMParser();
-
     let index = searchResult.index + 1;
-    let color = colors[index];
 
     //parse search result html
+    let parser = new DOMParser();
     let optionHtml = searchResult.data;
     let optionDoc = parser.parseFromString(optionHtml, 'text/html');
 
