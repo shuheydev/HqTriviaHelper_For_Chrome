@@ -82,12 +82,52 @@ async function initOnLoadCompleted(e) {
         //send search result to background page
         // chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
 
+        //Reconstruct page
+        ReConstrucPage(document, searchResults);
+
         const endTime = performance.now();
         console.log(endTime - startTime);
         console.log("all completed");
     }
 }
 window.addEventListener("load", initOnLoadCompleted, false);
+
+function ReConstrucPage(doc, searchResults) {
+    let bodyElem = doc.querySelector('body');
+    //clear Body
+    bodyElem.innerHTML = "";
+
+    //Add each option's search result
+    for (i = 0; i < searchResults.length; i++) {
+        InsertSearchResult(bodyElem, searchResults[i]);
+    }
+}
+function InsertSearchResult(bodyElem, searchResult) {
+    const colors = ["", "greenyellow", "lightpink", "lightblue"];
+    let parser = new DOMParser();
+
+    let index = searchResult.index + 1;
+    let color = colors[index];
+
+    //parse search result html
+    let optionHtml = searchResult.data;
+    let optionDoc = parser.parseFromString(optionHtml, 'text/html');
+
+    //remove search form from search result
+    optionDoc.querySelector('#searchform').remove();
+
+    //prepare the element that insert option's search result to
+    let optionBody = optionDoc.querySelector('body');
+    bodyElem.insertAdjacentHTML('beforeend', `<div id="option${index}" style="width: 33.3333%; float: left;overflow:scroll;"><div>option${index}</div></div>`);
+
+    //then insert option' search result
+    let insertPosition = bodyElem.querySelector(`#option${index} div`);
+    insertPosition.insertAdjacentHTML('afterbegin', optionBody.innerHTML);
+
+    //add option' name for information.
+    let option = searchResult.option;
+    insertPosition.insertAdjacentHTML('beforebegin', `<div style="background-color: ${color}; font-size: x-large;">${option}</div>`);
+}
 
 async function SearchEveryOptionsAsync(options, questionString) {
     let processes = [];
