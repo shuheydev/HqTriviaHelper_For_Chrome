@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(sender.tab.id);
     console.log(message.searchResults[0]);
 
-    //opsion1,2,3.htmlをそれぞれ更新する.
+    //option1,2,3.htmlをそれぞれ更新する.
 
 
     chrome.tabs.update(sender.tab.id, { url: "../TestData/main.html" });
