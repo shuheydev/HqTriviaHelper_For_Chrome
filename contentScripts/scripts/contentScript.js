@@ -85,6 +85,13 @@ async function initOnLoadCompleted(e) {
         //Reconstruct page
         ReConstrucPage(document, searchResults);
 
+        //highlight on search
+        let quotedString = options.join(' ');
+        Highlight(quotedString);
+        IsHighlight = true;
+
+
+
         const endTime = performance.now();
         console.log(endTime - startTime);
         console.log("all completed");
@@ -126,7 +133,7 @@ function InsertSearchResult(bodyElem, searchResult) {
 
     //add option' name for information.
     let option = searchResult.option;
-    insertPosition.insertAdjacentHTML('beforebegin', `<div style="background-color: ${color}; font-size: x-large;">${option}</div>`);
+    insertPosition.insertAdjacentHTML('beforebegin', `<div style="font-size: x-large;">${option}</div>`);
 }
 
 async function SearchEveryOptionsAsync(options, questionString) {
