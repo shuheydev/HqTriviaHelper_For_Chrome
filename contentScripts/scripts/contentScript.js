@@ -192,8 +192,6 @@ const GoogleSearch = async function (question, option, optionIndex) {
     return result;
 }
 
-let SearchResults = {};
-
 function ExtractQuotedString(inputText) {
     let reQuotedWord = /\".+?\"/gi;
 
