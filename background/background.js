@@ -26,3 +26,22 @@ browser.commands.onCommand.addListener(function (command) {
     }
 });
 
+
+//contentScriptからのメッセージを受け取る
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.command !== "sendSearchResults")
+        return;
+
+    console.log(message.command);
+    console.log(sender);
+    sendResponse({});
+    console.log(message.searchResults);
+    console.log(sender.tab.id);
+    console.log(message.searchResults[0]);
+
+    //option1,2,3.htmlをそれぞれ更新する.
+
+
+    // chrome.tabs.update(sender.tab.id, { url: "../TestData/main.html" });
+});
+

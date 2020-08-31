@@ -1,0 +1,40 @@
+<!doctype html>
+<html itemscope="" itemtype="http://schema.org/SearchResultsPage" lang="en-JP">
+
+<head>
+    <link rel="stylesheet" href="main.css">
+    <script>
+        window.addEventListener('message', function (e) {
+            var iframe = $("#parentframe");
+            var eventName = e.data[0];
+            var data = e.data[1];
+            switch (eventName) {
+                case 'setHeight':
+                    iframe.height(data);
+                    break;
+            }
+        }, false);
+    </script>
+</head>
+
+<body>
+    <div id="wrap">
+        <!-- <header>
+            <h1>ヘッダー</h1>
+        </header> -->
+        <div id="option1">
+            <iframe src='option1.html'></iframe>
+        </div>
+        <div id="option2">
+            <iframe src='option2.html'></iframe>
+        </div>
+        <div id="option3">
+            <iframe src='option3.html'></iframe>
+        </div>
+        <!-- <footer>
+            <h2>フッター</h2>
+        </footer> -->
+    </div>
+</body>
+
+</html>
