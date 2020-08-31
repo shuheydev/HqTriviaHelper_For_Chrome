@@ -68,6 +68,13 @@ function InsertSearchResult(bodyElem, searchResult) {
 
     //remove search form from search result
     optionDoc.querySelector('#searchform').remove();
+    //remove left margin
+    let marginElem = optionDoc.querySelector('#center_col');
+    marginElem.style.marginLeft = "10px";
+    marginElem = optionDoc.querySelector('#hdtb-msb-vis');
+    marginElem.style.marginLeft = "10px";
+    marginElem = optionDoc.querySelector('#slim_appbar');
+    marginElem.style.marginLeft = "10px";
 
     //prepare the element that insert option's search result to
     let optionBody = optionDoc.querySelector('body');
