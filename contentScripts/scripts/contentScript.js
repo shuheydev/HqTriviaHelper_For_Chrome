@@ -7,101 +7,44 @@ var IsHighlight = false;
 
 //EventHandler when page loaded.
 async function initOnLoadCompleted(e) {
-    //add handler to event that receive message from popup page.
-    browser.runtime.onMessage.addListener((message) => {
-        switch (message.command) {
-            case 'search'://'search' button clicked.
-                Highlight(message.target);
-                IsHighlight = true;
-                break;
-            case 'clear'://'clear' button clicked.
-                Highlight("");
-                IsHighlight = false;
-                break;
-            case 'toggle'://'Shif+Alt+L'Shortcut
-                if (IsHighlight) {
-                    Highlight("");
-                    IsHighlight = false;
-                }
-                else {
-                    Highlight(message.target);
-                    IsHighlight = true;
-                }
-                break;
-            case 'toggle-highlight-on-googlesearch':
-                chrome.storage.local.get("IsHighlightOnSearchEnabled", function (result) {
-                    let isHighlightOnSearchEnabled = result.IsHighlightOnSearchEnabled;
-                    if (isHighlightOnSearchEnabled) {
-                        let inputElem = document.querySelector("input[name='q']");
-                        if (inputElem == null)
-                            return;
+    const startTime = performance.now();
+    //execute if switch is ON.
+    chrome.storage.local.get("IsHqTriviaHelperEnabled", async function (result) {
+        let isHqTriviaHelperEnabled = result.IsHqTriviaHelperEnabled;
 
-                        let searchText = inputElem.value;
+        if (!isHqTriviaHelperEnabled)
+            return;
 
-                        //Extract strings surrounded by `"`.
-                        let quotedString = ExtractQuotedString(searchText);
-                        Highlight(quotedString);
-                        IsHighlight = true;
-                    }
-                    else {
-                        Highlight("");
-                        IsHighlight = false;
-                    }
-                });
-                break;
-        }
-    });
+        let searchText = GetSearchText(document);
+        console.log(searchText);
 
-    //this must be executed after the window is fully loaded
-    if (document.readyState === 'complete') {
-        const startTime = performance.now();
+        //Extract Question string
+        let questionString = GetQuestionString(searchText);
 
-        console.log("load completed");
+        //Extract Question string
+        let optionString = GetOpsionString(searchText, questionString);
 
-        //execute if switch is ON.
-        chrome.storage.local.get("IsHighlightOnSearchEnabled", async function (result) {
-            let isHighlightOnSearchEnabled = result.IsHighlightOnSearchEnabled;
+        console.log(questionString);
 
-            if (!isHighlightOnSearchEnabled)
-                return;
+        //Extract Option string
+        let options = GetOptions(optionString);
 
-            let searchText = GetSearchText(document);
-            console.log(searchText);
+        //wait all completed.
+        let searchResults = await SearchEveryOptionsAsync(options, questionString);
+        // console.log(searchResults);
 
-            //Extract Question string
-            let questionString = GetQuestionString(searchText);
+        //Reconstruct page
+        ReConstrucPage(document, searchResults);
 
-            //Extract Question string
-            let optionString = GetOpsionString(searchText, questionString);
-
-            // questionString = questionString.substring(0, questionString.length - 1);
-
-            console.log(questionString);
-
-            //Extract Option string
-            let options = GetOptions(optionString);
-
-            //wait all completed.
-            let searchResults = await SearchEveryOptionsAsync(options, questionString);
-            console.log(searchResults);
-
-            //send search result to background page
-            // chrome.runtime.sendMessage({ command: "sendSearchResults", searchResults: SearchResults });
-
-            //Reconstruct page
-            ReConstrucPage(document, searchResults);
-
-            let quotedString = options.join(' ');
-            Highlight(quotedString);
-            IsHighlight = true;
-
-        });
-
+        let quotedString = options.join(' ');
+        Highlight(quotedString);
+        IsHighlight = true;
 
         const endTime = performance.now();
         console.log(endTime - startTime);
         console.log("all completed");
-    }
+    });
+
 }
 window.addEventListener("load", initOnLoadCompleted, false);
 
@@ -125,6 +68,13 @@ function InsertSearchResult(bodyElem, searchResult) {
 
     //remove search form from search result
     optionDoc.querySelector('#searchform').remove();
+    //remove left margin
+    let marginElem = optionDoc.querySelector('#center_col');
+    marginElem.style.marginLeft = "10px";
+    marginElem = optionDoc.querySelector('#hdtb-msb-vis');
+    marginElem.style.marginLeft = "10px";
+    marginElem = optionDoc.querySelector('#slim_appbar');
+    marginElem.style.marginLeft = "10px";
 
     //prepare the element that insert option's search result to
     let optionBody = optionDoc.querySelector('body');
@@ -167,6 +117,7 @@ function GetQuestionString(searchText) {
     let reQuestion = /^.+\(/i;
     let question = reQuestion.exec(searchText);
     let questionString = question[0];
+    questionString = questionString.substring(0, questionString.length - 1);
 
     return questionString;
 }
@@ -195,7 +146,6 @@ const GoogleSearch = async function (question, option, optionIndex) {
     })
         .done((data) => {
             // console.log(data);
-            // SearchResults[optionIndex] = { option: option, data: data, index: optionIndex };
             result = { option: option, data: data, index: optionIndex };
         });
 
