@@ -1,4 +1,7 @@
 # SearchAndHighlight_For_Chrome
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 This is a tool for helping play HQ Trivia, a chrome extension.
 When you search HQ Trivia's whole question text on Chrome browser, this extension search each combinations of Quesion and Option on `Google search`, then show you search results in 3 column then highlight each option.
 
